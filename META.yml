@@ -1,0 +1,18 @@
+---
+abstract: 'A JSON-RPC 2.0 server.'
+author:
+  - 'JT Smith <RIZEN@cpan.org>'
+generated_by: 'Dist::Zilla version 1.093400'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: JSON-RPC-Dispatcher
+requires:
+  JSON: 2.16
+  Moose: 0.93
+  Plack: 0.9023
+  Plack::Request: 0.09
+  Test::Deep: 0
+  Test::More: 0
+version: 0.0100
