@@ -1,5 +1,5 @@
 package JSON::RPC::Dispatcher;
-our $VERSION = '0.0100';
+our $VERSION = '0.0101';
 
 =head1 NAME
 
@@ -7,7 +7,7 @@ JSON::RPC::Dispatcher - A JSON-RPC 2.0 server.
 
 =head1 VERSION
 
-version 0.0100
+version 0.0101
 
 =head1 SYNOPSIS
 
@@ -85,6 +85,7 @@ B<NOTE:> If you don't care about setting error codes and just want to set an err
 
 
 use Moose;
+use bytes;
 extends qw(Plack::Component);
 use Plack::Request;
 use JSON;
@@ -163,7 +164,7 @@ sub acquire_procedures_from_post {
         if (ref $request eq 'ARRAY') {
             my @procs;
             foreach my $proc (@{$request}) {
-                push @procs, $self->acquire_procedure_from_hashref($request);
+                push @procs, $self->acquire_procedure_from_hashref($proc);
             }
             return \@procs;
         }
@@ -185,7 +186,7 @@ sub acquire_procedure_from_hashref {
     my $proc = JSON::RPC::Dispatcher::Procedure->new;
     $proc->method($hashref->{method});
     $proc->id($hashref->{id});
-    $proc->params($hashref->{params});
+    $proc->params($hashref->{params}) if exists $hashref->{params};
     return $proc;
 }
 
@@ -202,7 +203,7 @@ sub acquire_procedure_from_get {
         $proc->error_data($params->{params});
     }
     else {
-        $proc->params($decoded_params);
+        $proc->params($decoded_params) if defined $decoded_params;
     }
     return $proc;
 }
@@ -210,6 +211,7 @@ sub acquire_procedure_from_get {
 #--------------------------------------------------------
 sub translate_error_code_to_status {
     my ($self, $code) = @_;
+    $code ||= '';
     my %trans = (
         ''          => 200,
         '-32600'    => 400,
@@ -226,6 +228,7 @@ sub handle_procedures {
     my @responses;
     my $rpcs = $self->rpcs;
     foreach my $proc (@{$procs}) {
+        my $is_notification = ($proc->id eq '') ? 1 : 0;
         unless ($proc->has_error_code) {
             my $rpc = $rpcs->{$proc->method};
             if (defined $rpc) {
@@ -242,10 +245,23 @@ sub handle_procedures {
                 $proc->method_not_found($proc->method);
             }
         }
-        push @responses, $proc->response;
+
+        # remove not needed elements per section 5 of the spec
+        my $response = $proc->response;
+        if (exists $response->{error}{code}) {
+            delete $response->{result};
+        }
+        else {
+            delete $response->{error};
+        }
+
+        # remove responses on notifications per section 4.1 of the spec
+        unless ($is_notification) {
+            push @responses, $response;
+        }
     }
 
-    # return the appropriate response
+    # return the appropriate response, for batch or not
     if (scalar(@responses) > 1) {
         return \@responses;
     }
@@ -277,9 +293,16 @@ sub call {
     }
 
     my $response = $request->new_response;
-    $response->status($self->translate_error_code_to_status( (ref $rpc_response eq 'HASH') ? $rpc_response->{error}{code} : '' ));
-    $response->content_type('application/json-rpc');
-    $response->body(to_json($rpc_response));
+    if ($rpc_response) {
+        $response->status($self->translate_error_code_to_status( (ref $rpc_response eq 'HASH' && exists $rpc_response->{error}) ? $rpc_response->{error}{code} : '' ));
+        $response->content_type('application/json-rpc');
+        my $json = to_json($rpc_response);
+        $response->content_length(bytes::length($json));
+        $response->body($json);
+    }
+    else { # is a notification only request
+        $response->status(204);
+    }
     return $response->finalize;
 }
 
@@ -290,31 +313,10 @@ L<JSON>
 L<Plack>
 L<Plack::Request>
 L<Test::More>
-L<Test::Deep>
 
 =head1 TODO
 
-This module still needs some work.
-
-=over
-
-=item *
-
-It has no test suite, and that needs to be fixed up asap. Although, all of the examples in the eg folder have been tested and work.
-
-=item *
-
-It doesn't support "notifications".
-
-=item *
-
-It's not strict about the protocol version number, or request id right now. Not sure if that's good or bad.
-
-=item *
-
 Once the JSON-RPC 2.0 spec is finalized, this module may need to change to support any last minute changes or additions.
-
-=back
 
 =head1 SUPPORT
 

@@ -4,8 +4,10 @@ MANIFEST
 META.yml
 Makefile.PL
 README
+author.t/test.pl
 dist.ini
 eg/app.psgi
+eg/bulk.json
 eg/echo.json
 eg/guess-correct.json
 eg/guess-high.json
