@@ -1,5 +1,5 @@
 package JSON::RPC::Dispatcher::Procedure;
-our $VERSION = '0.0101';
+our $VERSION = '0.0200';
 
 =head1 NAME
 
@@ -7,7 +7,7 @@ JSON::RPC::Dispatcher::Procedure - The data holder between RPC requests and resp
 
 =head1 VERSION
 
-version 0.0101
+version 0.0200
 
 =head1 SYNOPSIS
 
@@ -83,6 +83,19 @@ has error_data  => (
     is      => 'rw',
     default => undef,
 );
+
+#--------------------------------------------------------
+
+=head2 error ( code, message, [ data ] )
+
+=cut
+
+sub error {
+    my ($self, $code, $message, $data) = @_;
+    $self->error_code($code);
+    $self->error_message($message);
+    $self->error_data($data);
+}
 
 #--------------------------------------------------------
 

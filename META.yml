@@ -13,5 +13,6 @@ requires:
   Moose: 0.93
   Plack: 0.9023
   Plack::Request: 0.09
+  Sub::Name: 0.04
   Test::More: 0
-version: 0.0101
+version: 0.0200

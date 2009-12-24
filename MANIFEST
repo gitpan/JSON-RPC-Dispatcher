@@ -15,7 +15,9 @@ eg/guess-low.json
 eg/ping.json
 eg/sum.json
 lib/JSON/RPC/Dispatcher.pm
+lib/JSON/RPC/Dispatcher/App.pm
 lib/JSON/RPC/Dispatcher/Procedure.pm
 t/00.load.t
+t/App.t
 t/release-pod-coverage.t
 t/release-pod-syntax.t

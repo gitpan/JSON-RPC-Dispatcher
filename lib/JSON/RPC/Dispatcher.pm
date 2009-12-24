@@ -1,5 +1,5 @@
 package JSON::RPC::Dispatcher;
-our $VERSION = '0.0101';
+our $VERSION = '0.0200';
 
 =head1 NAME
 
@@ -7,7 +7,7 @@ JSON::RPC::Dispatcher - A JSON-RPC 2.0 server.
 
 =head1 VERSION
 
-version 0.0101
+version 0.0200
 
 =head1 SYNOPSIS
 
@@ -313,6 +313,7 @@ L<JSON>
 L<Plack>
 L<Plack::Request>
 L<Test::More>
+L<Sub::Name>
 
 =head1 TODO
 
