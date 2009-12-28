@@ -1,5 +1,5 @@
 package JSON::RPC::Dispatcher::App;
-our $VERSION = '0.0200';
+our $VERSION = '0.0300';
 
 use Moose;
 use JSON::RPC::Dispatcher;
@@ -11,7 +11,7 @@ JSON::RPC::Dispatcher::App - A base class for creating object oriented apps with
 
 =head1 VERSION
 
-version 0.0200
+version 0.0300
 
 =head1 SYNOPSIS
 
@@ -22,32 +22,26 @@ version 0.0200
  extends 'JSON::RPC::Dispatcher::App';
 
  sub sum {
-    my ($self, $params) = @_;
+    my ($self, @params) = @_;
     my $sum = 0;
-    $sum += $_ for @{$params};
+    $sum += $_ for @params;
     return $sum;
  }
 
  sub guess {
-    my ($self, $proc) = @_;
-    my $guess = $proc->params->[0];
+    my ($self, $guess) = @_;
     if ($guess == 10) {
-	return 'Correct!';
+	    return 'Correct!';
     }
     elsif ($guess > 10) {
-	$proc->error_code(986);
-    	$proc->error_message('Too high.');
+        confess [986, 'Too high.', $guess];
     }
     else {
-	$proc->error_code(987);
-    	$proc->error_message('Too low.');
+        confess [987, 'Too low.', $guess];   
     }
-    $proc->error_data($guess);
-    return undef;
  }
 
- __PACKAGE__->register_rpc_method_names( qw( sum ) );
- __PACKAGE__->register_advanced_rpc_method_names( qw( guess ) );
+ __PACKAGE__->register_rpc_method_names( qw( sum guess ) );
 
  1;
 
@@ -79,7 +73,7 @@ When you subclass you can easily add your own attributes using L<Moose>'s C<has>
  );
 
  sub make_it_go {
-     my ($self, $params) = @_;
+     my ($self, @params) = @_;
      my $sth = $self->db->prepare("select * from foo");
      ...
  }
@@ -123,32 +117,6 @@ sub register_rpc_method_names {
 
 #--------------------------------------------------------
 
-=head2 register_advanced_rpc_method_names ( names )
-
-Class method. Registers a list of method names using L<JSON::RPC::Dispatcher>'s C<register_advanced> method.
-
-=head3 names
-
-The list of method names to register.
-
-=cut
-
-sub register_advanced_rpc_method_names {
-    my ($class, @methods) = @_;
-    my $name = $class."::_advanced_rpc_method_names";
-    no strict 'refs';
-    *{$name} = Sub::Name::subname($name, sub {
-        my @old_names = ();
-        my $super = $class.'::SUPER';
-        if ($super->can('_advanced_rpc_method_names')) {
-            @old_names = $super->_advanced_rpc_method_names;
-        }
-        return (@old_names, @methods); 
-    } );
-}
-
-#--------------------------------------------------------
-
 =head2 to_app ( )
 
 Generates a PSGI/L<Plack> compatible app.
@@ -162,11 +130,6 @@ sub to_app {
     if ($ref = $self->can('_rpc_method_names')) {
         foreach my $method ($ref->()) {
             $rpc->register($method, sub {  $self->$method(@_) });
-        }
-    }
-    if ($ref = $self->can('_advanced_rpc_method_names')) {
-        foreach my $method ($ref->()) {
-            $rpc->register_advanced($method, sub {  $self->$method(@_) });
         }
     }
     $rpc->to_app;

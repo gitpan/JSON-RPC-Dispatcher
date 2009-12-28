@@ -15,4 +15,4 @@ requires:
   Plack::Request: 0.09
   Sub::Name: 0.04
   Test::More: 0
-version: 0.0200
+version: 0.0300
