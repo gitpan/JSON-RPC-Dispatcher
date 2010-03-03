@@ -1,9 +1,8 @@
 package JSON::RPC::Dispatcher::App;
-our $VERSION = '0.0300';
+our $VERSION = '0.0400';
 
 use Moose;
 use JSON::RPC::Dispatcher;
-use Sub::Name;
 
 =head1 NAME
 
@@ -11,11 +10,12 @@ JSON::RPC::Dispatcher::App - A base class for creating object oriented apps with
 
 =head1 VERSION
 
-version 0.0300
+version 0.0400
 
 =head1 SYNOPSIS
 
- # create your app
+Create your module:
+
  package MyApp;
 
  use Moose;
@@ -45,7 +45,8 @@ version 0.0300
 
  1;
 
- # app.psgi
+Then your plack F<app.psgi>:
+
  MyApp->new->to_app;
 
 =head1 DESCRIPTION
@@ -82,7 +83,8 @@ When you subclass you can easily add your own attributes using L<Moose>'s C<has>
 
  1;
 
- # app.psgi
+In F<app.psgi>:
+
  my $db = DBI->connect(...);
  MyApp->new(db=>$db)->to_app;
 
@@ -100,18 +102,16 @@ The list of method names to register.
 
 =cut
 
+sub _rpc_method_names {
+    return ();
+}
+
 sub register_rpc_method_names {
     my ($class, @methods) = @_;
-    my $name = $class."::_rpc_method_names";
-    no strict 'refs';
-    *{$name} = Sub::Name::subname($name, sub { 
-        my @old_names = ();
-        my $super = $class.'::SUPER';
-        if ($super->can('_rpc_method_names')) {
-            @old_names = $super->_rpc_method_names;
-        }
-        return (@old_names, @methods); 
-    } );
+    $class->meta->add_around_method_modifier('_rpc_method_names', sub {
+        my ($orig, $self) = @_;
+        return ($orig->(), @methods);
+    });
 }
 
 
@@ -138,9 +138,8 @@ sub to_app {
 
 =head1 LEGAL
 
-JSON::RPC::Dispatcher is Copyright 2009 Plain Black Corporation (L<http://www.plainblack.com/>) and is licensed under the same terms as Perl itself.
+JSON::RPC::Dispatcher is Copyright 2009-2010 Plain Black Corporation (L<http://www.plainblack.com/>) and is licensed under the same terms as Perl itself.
 
 =cut
 
-no Moose;
-__PACKAGE__->meta->make_immutable;
+1;

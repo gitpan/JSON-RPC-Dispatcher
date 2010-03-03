@@ -1,5 +1,5 @@
 package JSON::RPC::Dispatcher::Procedure;
-our $VERSION = '0.0300';
+our $VERSION = '0.0400';
 
 =head1 NAME
 
@@ -7,7 +7,7 @@ JSON::RPC::Dispatcher::Procedure - The data holder between RPC requests and resp
 
 =head1 VERSION
 
-version 0.0300
+version 0.0400
 
 =head1 SYNOPSIS
 
@@ -281,7 +281,7 @@ sub response {
 
 =head1 LEGAL
 
-JSON::RPC::Dispatcher is Copyright 2009 Plain Black Corporation (L<http://www.plainblack.com/>) and is licensed under the same terms as Perl itself.
+JSON::RPC::Dispatcher is Copyright 2009-2010 Plain Black Corporation (L<http://www.plainblack.com/>) and is licensed under the same terms as Perl itself.
 
 =cut
 

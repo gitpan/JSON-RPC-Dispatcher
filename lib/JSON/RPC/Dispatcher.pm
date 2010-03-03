@@ -1,5 +1,5 @@
 package JSON::RPC::Dispatcher;
-our $VERSION = '0.0300';
+our $VERSION = '0.0400';
 
 =head1 NAME
 
@@ -7,11 +7,12 @@ JSON::RPC::Dispatcher - A JSON-RPC 2.0 server.
 
 =head1 VERSION
 
-version 0.0300
+version 0.0400
 
 =head1 SYNOPSIS
 
- # app.psgi
+In F<app.psgi>:
+
  use JSON::RPC::Dispatcher;
 
  my $rpc = JSON::RPC::Dispatcher->new;
@@ -74,6 +75,17 @@ You can also throw error messages rather than just C<die>ing, which will throw a
 
 B<NOTE:> If you don't care about setting error codes and just want to set an error message, you can simply C<die> in your RPC and your die message will be inserted into the C<error_data> method.
 
+=head2 Logging
+
+JSON::RPC::Dispatcher allows for logging via L<Log::Any>. This way you can set up logs with L<Log::Dispatch>, L<Log::Log4perl>, or any other logging system that L<Log::Any> supports now or in the future. It's relatively easy to set up. In your F<app.psgi> simply add a block like this:
+
+ use Log::Any::Adapter;
+ use Log::Log4perl;
+ Log::Log4perl::init('/path/to/log4perl.conf');
+ Log::Any::Adapter->set('Log::Log4perl');
+
+That's how easy it is to start logging. You'll of course still need to configure the F<log4perl.conf> file, which goes well beyond the scope of this document. And you'll also need to install L<Log::Any::Adapter::Log4perl> to use this example.
+
 =cut
 
 
@@ -83,6 +95,7 @@ extends qw(Plack::Component);
 use Plack::Request;
 use JSON;
 use JSON::RPC::Dispatcher::Procedure;
+use Log::Any qw($log);
 
 #--------------------------------------------------------
 has error_code => (
@@ -121,7 +134,7 @@ sub register {
 sub acquire_procedures {
     my ($self, $request) = @_;
     if ($request->method eq 'POST') {
-        return $self->acquire_procedures_from_post($request->raw_body);
+        return $self->acquire_procedures_from_post($request->content);
     }
     elsif ($request->method eq 'GET') {
         return [ $self->acquire_procedure_from_get($request->query_parameters) ];
@@ -212,7 +225,7 @@ sub handle_procedures {
     my @responses;
     my $rpcs = $self->rpcs;
     foreach my $proc (@{$procs}) {
-        my $is_notification = ($proc->id eq '') ? 1 : 0;
+        my $is_notification = (defined $proc->id && $proc->id ne '') ? 0 : 1;
         unless ($proc->has_error_code) {
             my $rpc = $rpcs->{$proc->method};
             if (defined $rpc) {
@@ -233,9 +246,25 @@ sub handle_procedures {
                 # deal with result
                 if ($@ && ref($@) eq 'ARRAY') {
                     $proc->error(@{$@});
+                    $log->error($@->[1]);
+                    $log->debug($@->[2]);
                 }
                 elsif ($@) {
-                    $proc->internal_error($@);
+                    my $error = $@;
+                    if ($error->can('error') && $error->can('trace')) {
+                         $error = $error->error;
+                         $log->fatal($error->error);
+                         $log->trace($error->trace->as_string);
+                    }
+                    elsif ($error->can('error')) {
+                        $error = $error->error;
+                        $log->fatal($error);
+                    }
+                    elsif (ref $error ne '' && ref $error ne 'HASH' && ref $error ne 'ARRAY') {
+                        $log->fatal($error);
+                        $error = ref $error;
+                    }
+                    $proc->internal_error($error);
                 }
                 else {
                     $proc->result($result);
@@ -275,6 +304,7 @@ sub call {
     my ($self, $env) = @_;
 
     my $request = Plack::Request->new($env);
+    $log->info("REQUEST: ".$request->content) if $log->is_info;
     my $procs = $self->acquire_procedures($request);
 
     my $rpc_response;
@@ -294,14 +324,27 @@ sub call {
 
     my $response = $request->new_response;
     if ($rpc_response) {
+        my $json = eval{to_json($rpc_response)};
+        if ($@) {
+            $log->warn("JSON repsonse error: ".$@);
+            $json = to_json({
+                jsonrpc => "2.0",
+                error   => {
+                    code    => -32099,
+                    message => "Couldn't convert method response to JSON.",
+                    data    => $@,
+                    }
+                 });
+        }
         $response->status($self->translate_error_code_to_status( (ref $rpc_response eq 'HASH' && exists $rpc_response->{error}) ? $rpc_response->{error}{code} : '' ));
         $response->content_type('application/json-rpc');
-        my $json = to_json($rpc_response);
         $response->content_length(bytes::length($json));
         $response->body($json);
+        $log->info("RESPONSE: ".$response->body) if $log->is_info;
     }
     else { # is a notification only request
         $response->status(204);
+        $log->info('RESPONSE: Notification Only');
     }
     return $response->finalize;
 }
@@ -311,9 +354,8 @@ sub call {
 L<Moose> 
 L<JSON> 
 L<Plack>
-L<Plack::Request>
 L<Test::More>
-L<Sub::Name>
+L<Log::Any>
 
 =head1 TODO
 
@@ -395,7 +437,7 @@ JT Smith <jt_at_plainblack_com>
 
 =head1 LEGAL
 
-JSON::RPC::Dispatcher is Copyright 2009 Plain Black Corporation (L<http://www.plainblack.com/>) and is licensed under the same terms as Perl itself.
+JSON::RPC::Dispatcher is Copyright 2009-2010 Plain Black Corporation (L<http://www.plainblack.com/>) and is licensed under the same terms as Perl itself.
 
 =cut
 

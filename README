@@ -1,11 +1,11 @@
 
 
 This archive contains the distribution JSON-RPC-Dispatcher, version
-0.0300:
+0.0400:
 
   A JSON-RPC 2.0 server.
 
-This software is copyright (c) 2009 by Plain Black Corporation.
+This software is copyright (c) 2010 by Plain Black Corporation.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
