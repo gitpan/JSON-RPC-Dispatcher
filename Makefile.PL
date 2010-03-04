@@ -11,7 +11,7 @@ WriteMakefile(
   NAME      => 'JSON::RPC::Dispatcher',
   AUTHOR    => "JT\ Smith\ \<RIZEN\@cpan\.org\>",
   ABSTRACT  => "A\ JSON\-RPC\ 2\.0\ server\.",
-  VERSION   => '0.0400',
+  VERSION   => '0.0401',
   EXE_FILES => [ qw() ],
   (eval { ExtUtils::MakeMaker->VERSION(6.31) } ? (LICENSE => 'perl') : ()),
   PREREQ_PM    => {

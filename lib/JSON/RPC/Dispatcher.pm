@@ -1,5 +1,5 @@
 package JSON::RPC::Dispatcher;
-our $VERSION = '0.0400';
+our $VERSION = '0.0401';
 
 =head1 NAME
 
@@ -7,7 +7,7 @@ JSON::RPC::Dispatcher - A JSON-RPC 2.0 server.
 
 =head1 VERSION
 
-version 0.0400
+version 0.0401
 
 =head1 SYNOPSIS
 
@@ -252,9 +252,9 @@ sub handle_procedures {
                 elsif ($@) {
                     my $error = $@;
                     if ($error->can('error') && $error->can('trace')) {
-                         $error = $error->error;
                          $log->fatal($error->error);
                          $log->trace($error->trace->as_string);
+                         $error = $error->error;
                     }
                     elsif ($error->can('error')) {
                         $error = $error->error;
