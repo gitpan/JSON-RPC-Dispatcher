@@ -1,5 +1,5 @@
 package JSON::RPC::Dispatcher::Procedure;
-our $VERSION = '0.0401';
+our $VERSION = '0.0402';
 
 =head1 NAME
 
@@ -7,7 +7,7 @@ JSON::RPC::Dispatcher::Procedure - The data holder between RPC requests and resp
 
 =head1 VERSION
 
-version 0.0401
+version 0.0402
 
 =head1 SYNOPSIS
 
@@ -190,7 +190,7 @@ has method  => (
     default => undef,
     trigger => sub {
             my ($self, $new, $old) = @_;
-            unless ($new =~ m{^[A-Za-z0-9_]+$}xms) {
+            if (defined $new && $new !~ m{^[A-Za-z0-9_]+$}xms) {
                 $self->invalid_request($new.' is not a valid method name.');
             }
         },

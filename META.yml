@@ -2,7 +2,10 @@
 abstract: 'A JSON-RPC 2.0 server.'
 author:
   - 'JT Smith <RIZEN@cpan.org>'
-generated_by: 'Dist::Zilla version 1.093400'
+build_requires: {}
+configure_requires:
+  ExtUtils::MakeMaker: 6.11
+generated_by: 'Dist::Zilla version 1.100711'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -14,4 +17,4 @@ requires:
   Moose: 0.93
   Plack: 0.9913
   Test::More: 0
-version: 0.0401
+version: 0.0402

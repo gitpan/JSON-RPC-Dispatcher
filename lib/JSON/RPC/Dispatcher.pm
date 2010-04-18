@@ -1,5 +1,5 @@
 package JSON::RPC::Dispatcher;
-our $VERSION = '0.0401';
+our $VERSION = '0.0402';
 
 =head1 NAME
 
@@ -7,7 +7,7 @@ JSON::RPC::Dispatcher - A JSON-RPC 2.0 server.
 
 =head1 VERSION
 
-version 0.0401
+version 0.0402
 
 =head1 SYNOPSIS
 
@@ -47,7 +47,7 @@ And you'd get back:
 
 Using this app you can make any PSGI/L<Plack> aware server a JSON-RPC 2.0 server. This will allow you to expose your custom functionality as a web service in a relatiely tiny amount of code, as you can see above.
 
-This module follows the draft specficiation for JSON-RPC 2.0. More information can be found at L<http://groups.google.com/group/json-rpc/web/json-rpc-1-2-proposal>.
+This module follows the draft specficiation for JSON-RPC 2.0. More information can be found at L<http://groups.google.com/group/json-rpc/web/json-rpc-2-0>.
 
 =head2 Advanced Error Handling
 
@@ -155,6 +155,8 @@ sub acquire_procedures_from_post {
         $self->error_code(-32700);
         $self->error_message('Parse error.');
         $self->error_data($body);
+        $log->fatal('Parse error.');
+        $log->debug($body);
         return undef;
     }
     else {
@@ -172,6 +174,8 @@ sub acquire_procedures_from_post {
             $self->error_code(-32600);
             $self->error_message('Invalid request.');
             $self->error_data($request);
+            $log->fatal('Invalid request.');
+            $log->debug($body);
             return undef;
         }
     }
@@ -356,10 +360,6 @@ L<JSON>
 L<Plack>
 L<Test::More>
 L<Log::Any>
-
-=head1 TODO
-
-Once the JSON-RPC 2.0 spec is finalized, this module may need to change to support any last minute changes or additions.
 
 =head1 SUPPORT
 
