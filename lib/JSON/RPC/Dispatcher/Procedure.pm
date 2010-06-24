@@ -1,5 +1,5 @@
 package JSON::RPC::Dispatcher::Procedure;
-our $VERSION = '0.0402';
+our $VERSION = '0.0500';
 
 =head1 NAME
 
@@ -7,7 +7,7 @@ JSON::RPC::Dispatcher::Procedure - The data holder between RPC requests and resp
 
 =head1 VERSION
 
-version 0.0402
+version 0.0500
 
 =head1 SYNOPSIS
 
@@ -211,13 +211,8 @@ An array or hashref. Sets the parameters. Will set an error if the params are no
 has params  => (
     is      => 'rw',
     default => undef,
-    trigger => sub {
-            my ($self, $new, $old) = @_;
-            unless (ref $new eq 'ARRAY' or ref $new eq 'HASH') {
-                $self->invalid_params('Params must be an array ref or hash ref.');
-            }
-        },
 );
+
 
 #--------------------------------------------------------
 

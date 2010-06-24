@@ -4,6 +4,13 @@ MANIFEST
 META.yml
 Makefile.PL
 README
+author.t/app.psgi
+author.t/app.t
+author.t/examples.t
+author.t/inheritance.psgi
+author.t/inheritance.t
+author.t/lib/Bar.pm
+author.t/lib/Foo.pm
 dist.ini
 eg/app.psgi
 eg/bulk.json

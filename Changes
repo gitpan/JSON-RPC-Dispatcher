@@ -1,3 +1,11 @@
+0.0500 2010-06-24
+ - Moved bug tracking to github.
+ - Messages that process correctly, but return an error response rather than a result response now log as "error" rather than "info". All other errors are still logged as "fatal".
+ - Added more documentation about what is logged.
+ - Restructured request params handling.
+ - Added with_plack_request registration option.
+ - Updated register_rpc_method_names() to support registration options.
+
 0.0402 2010-04-18
  - Fixed an uninitialized warning.
  - Some types of fatal errors weren't being logged.

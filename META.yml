@@ -11,10 +11,19 @@ meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
   version: 1.4
 name: JSON-RPC-Dispatcher
+no_index:
+  directory:
+    - author.t
+    - eg
 requires:
   JSON: 2.16
   Log::Any: 0.11
   Moose: 0.93
   Plack: 0.9913
   Test::More: 0
-version: 0.0402
+resources:
+  bugtracker.web: http://github.com/plainblack/JSON-RPC-Dispatcher/issues
+  repository.type: git
+  repository.url: git://github.com/plainblack/JSON-RPC-Dispatcher.git
+  repository.web: http://github.com/plainblack/JSON-RPC-Dispatcher
+version: 0.0500
