@@ -1,5 +1,5 @@
 package JSON::RPC::Dispatcher;
-our $VERSION = '0.0500';
+our $VERSION = '0.0501';
 
 =head1 NAME
 
@@ -7,7 +7,7 @@ JSON::RPC::Dispatcher - A JSON-RPC 2.0 server.
 
 =head1 VERSION
 
-version 0.0500
+version 0.0501
 
 =head1 SYNOPSIS
 
@@ -376,10 +376,10 @@ sub call {
 
     my $response = $request->new_response;
     if ($rpc_response) {
-        my $json = eval{to_json($rpc_response)};
+        my $json = eval{JSON->new->utf8->encode($rpc_response)};
         if ($@) {
             $log->error("JSON repsonse error: ".$@);
-            $json = to_json({
+            $json = JSON->new->utf8->encode({
                 jsonrpc => "2.0",
                 error   => {
                     code    => -32099,
