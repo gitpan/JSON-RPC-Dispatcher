@@ -1,5 +1,5 @@
 package Bar;
-our $VERSION = '0.0501';
+our $VERSION = '0.0502';
 
 use Moose;
 extends 'Foo';

@@ -1,5 +1,5 @@
 package JSON::RPC::Dispatcher::Procedure;
-our $VERSION = '0.0501';
+our $VERSION = '0.0502';
 
 =head1 NAME
 
@@ -7,7 +7,7 @@ JSON::RPC::Dispatcher::Procedure - The data holder between RPC requests and resp
 
 =head1 VERSION
 
-version 0.0501
+version 0.0502
 
 =head1 SYNOPSIS
 
