@@ -26,4 +26,4 @@ resources:
   repository.type: git
   repository.url: git://github.com/plainblack/JSON-RPC-Dispatcher.git
   repository.web: http://github.com/plainblack/JSON-RPC-Dispatcher
-version: 0.0502
+version: 0.0503
