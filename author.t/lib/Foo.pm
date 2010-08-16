@@ -1,5 +1,4 @@
 package Foo;
-our $VERSION = '0.0503';
 
 use lib '../lib';
 

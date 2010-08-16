@@ -1,5 +1,7 @@
 package JSON::RPC::Dispatcher;
-our $VERSION = '0.0503';
+BEGIN {
+  $JSON::RPC::Dispatcher::VERSION = '0.0504';
+}
 
 =head1 NAME
 
@@ -7,7 +9,7 @@ JSON::RPC::Dispatcher - A JSON-RPC 2.0 server.
 
 =head1 VERSION
 
-version 0.0503
+version 0.0504
 
 =head1 SYNOPSIS
 
@@ -209,7 +211,7 @@ sub acquire_procedures {
 sub acquire_procedures_from_post {
     my ($self, $plack_request) = @_;
     my $body = $plack_request->content;
-    my $request = eval{from_json($body)};
+    my $request = eval{from_json($body, {utf8=>1})};
     if ($@) {
         $self->error_code(-32700);
         $self->error_message('Parse error.');
@@ -244,7 +246,7 @@ sub acquire_procedures_from_post {
 sub acquire_procedure_from_get {
     my ($self, $plack_request) = @_;
     my $params = $plack_request->query_parameters;
-    my $decoded_params = (exists $params->{params}) ? eval{from_json($params->{params})} : undef;
+    my $decoded_params = (exists $params->{params}) ? eval{from_json($params->{params},{utf8=>1})} : undef;
     return $self->create_proc($params->{method}, $params->{id}, ($@ || $decoded_params), $plack_request);
 }
 

@@ -4,37 +4,50 @@ use warnings;
 
 
 
-use ExtUtils::MakeMaker 6.11;
+use ExtUtils::MakeMaker 6.31;
 
 
 
 my %WriteMakefileArgs = (
-                       'test' => {
-                                   'TESTS' => 't/*.t'
-                                 },
-                       'NAME' => 'JSON::RPC::Dispatcher',
-                       'DISTNAME' => 'JSON-RPC-Dispatcher',
-                       'CONFIGURE_REQUIRES' => {
-                                                 'ExtUtils::MakeMaker' => '6.11'
-                                               },
-                       'AUTHOR' => 'JT Smith <RIZEN@cpan.org>',
-                       'BUILD_REQUIRES' => {},
-                       'ABSTRACT' => 'A JSON-RPC 2.0 server.',
-                       'EXE_FILES' => [],
-                       'VERSION' => '0.0503',
-                       'PREREQ_PM' => {
-                                        'Test::More' => '0',
-                                        'Plack' => '0.9913',
-                                        'Log::Any' => '0.11',
-                                        'JSON' => '2.16',
-                                        'Moose' => '0.93'
-                                      },
-                       'LICENSE' => 'perl'
-                     );
+  'ABSTRACT' => 'A JSON-RPC 2.0 server.',
+  'AUTHOR' => 'JT Smith <RIZEN@cpan.org>',
+  'BUILD_REQUIRES' => {},
+  'CONFIGURE_REQUIRES' => {
+    'ExtUtils::MakeMaker' => '6.31'
+  },
+  'DISTNAME' => 'JSON-RPC-Dispatcher',
+  'EXE_FILES' => [],
+  'LICENSE' => 'perl',
+  'NAME' => 'JSON::RPC::Dispatcher',
+  'PREREQ_PM' => {
+    'JSON' => '2.16',
+    'Log::Any' => '0.11',
+    'Moose' => '0.93',
+    'Plack' => '0.9913',
+    'Test::More' => '0'
+  },
+  'VERSION' => '0.0504',
+  'test' => {
+    'TESTS' => 't/*.t'
+  }
+);
 
 
-delete $WriteMakefileArgs{LICENSE}
-  unless eval { ExtUtils::MakeMaker->VERSION(6.31) };
+unless ( eval { ExtUtils::MakeMaker->VERSION(6.56) } ) {
+  my $br = delete $WriteMakefileArgs{BUILD_REQUIRES};
+  my $pp = $WriteMakefileArgs{PREREQ_PM};
+  for my $mod ( keys %$br ) {
+    if ( exists $pp->{$mod} ) {
+      $pp->{$mod} = $br->{$mod} if $br->{$mod} > $pp->{$mod};
+    }
+    else {
+      $pp->{$mod} = $br->{$mod};
+    }
+  }
+}
+
+delete $WriteMakefileArgs{CONFIGURE_REQUIRES}
+  unless eval { ExtUtils::MakeMaker->VERSION(6.52) };
 
 WriteMakefile(%WriteMakefileArgs);
 
