@@ -1,6 +1,6 @@
 package JSON::RPC::Dispatcher::Procedure;
 BEGIN {
-  $JSON::RPC::Dispatcher::Procedure::VERSION = '0.0504';
+  $JSON::RPC::Dispatcher::Procedure::VERSION = '0.0505';
 }
 
 =head1 NAME
@@ -9,7 +9,7 @@ JSON::RPC::Dispatcher::Procedure - The data holder between RPC requests and resp
 
 =head1 VERSION
 
-version 0.0504
+version 0.0505
 
 =head1 SYNOPSIS
 
@@ -48,7 +48,6 @@ Returns a boolean indicating whether an error code has been set.
 
 has error_code => (
     is          => 'rw',
-    default     => undef,
     predicate   => 'has_error_code',
 );
 

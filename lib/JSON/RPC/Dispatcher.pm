@@ -1,6 +1,6 @@
 package JSON::RPC::Dispatcher;
 BEGIN {
-  $JSON::RPC::Dispatcher::VERSION = '0.0504';
+  $JSON::RPC::Dispatcher::VERSION = '0.0505';
 }
 
 =head1 NAME
@@ -9,7 +9,7 @@ JSON::RPC::Dispatcher - A JSON-RPC 2.0 server.
 
 =head1 VERSION
 
-version 0.0504
+version 0.0505
 
 =head1 SYNOPSIS
 

@@ -1,6 +1,6 @@
 package JSON::RPC::Dispatcher::App;
 BEGIN {
-  $JSON::RPC::Dispatcher::App::VERSION = '0.0504';
+  $JSON::RPC::Dispatcher::App::VERSION = '0.0505';
 }
 
 use Moose;
@@ -12,7 +12,7 @@ JSON::RPC::Dispatcher::App - A base class for creating object oriented apps with
 
 =head1 VERSION
 
-version 0.0504
+version 0.0505
 
 =head1 SYNOPSIS
 
