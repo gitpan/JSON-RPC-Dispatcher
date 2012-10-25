@@ -4,7 +4,7 @@ use warnings;
 
 
 
-use ExtUtils::MakeMaker 6.31;
+use ExtUtils::MakeMaker 6.30;
 
 
 
@@ -13,7 +13,7 @@ my %WriteMakefileArgs = (
   'AUTHOR' => 'JT Smith <RIZEN@cpan.org>',
   'BUILD_REQUIRES' => {},
   'CONFIGURE_REQUIRES' => {
-    'ExtUtils::MakeMaker' => '6.31'
+    'ExtUtils::MakeMaker' => '6.30'
   },
   'DISTNAME' => 'JSON-RPC-Dispatcher',
   'EXE_FILES' => [],
@@ -26,7 +26,7 @@ my %WriteMakefileArgs = (
     'Plack' => '0.9913',
     'Test::More' => '0'
   },
-  'VERSION' => '0.0505',
+  'VERSION' => '0.0506',
   'test' => {
     'TESTS' => 't/*.t'
   }

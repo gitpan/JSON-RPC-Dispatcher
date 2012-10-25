@@ -1,6 +1,6 @@
 package JSON::RPC::Dispatcher;
 BEGIN {
-  $JSON::RPC::Dispatcher::VERSION = '0.0505';
+  $JSON::RPC::Dispatcher::VERSION = '0.0506';
 }
 
 =head1 NAME
@@ -9,7 +9,7 @@ JSON::RPC::Dispatcher - A JSON-RPC 2.0 server.
 
 =head1 VERSION
 
-version 0.0505
+version 0.0506
 
 =head1 SYNOPSIS
 
@@ -135,7 +135,7 @@ All errors that are not gracefully handled by the system will be put into a fata
 
 
 use Moose;
-use bytes;
+use utf8;
 extends qw(Plack::Component);
 use Plack::Request;
 use JSON;
@@ -308,7 +308,12 @@ sub handle_procedures {
                 my $result = eval{ $code_ref->( @{ $proc->params } ) };
 
                 # deal with result
-                if ($@ && ref($@) eq 'ARRAY') {
+                if ($@ && ref($@) eq 'Ouch') {
+                    $proc->error($@->code, $@->message, $@->data);
+                    $log->error($@->message);
+                    $log->debug($@->data);
+                }
+                elsif ($@ && ref($@) eq 'ARRAY') {
                     $proc->error(@{$@});
                     $log->error($@->[1]);
                     $log->debug($@->[2]);

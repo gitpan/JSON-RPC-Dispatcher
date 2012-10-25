@@ -4,9 +4,9 @@ author:
   - 'JT Smith <RIZEN@cpan.org>'
 build_requires: {}
 configure_requires:
-  ExtUtils::MakeMaker: 6.31
+  ExtUtils::MakeMaker: 6.30
 dynamic_config: 0
-generated_by: 'Dist::Zilla version 4.102340, CPAN::Meta::Converter version 2.101670'
+generated_by: 'Dist::Zilla version 4.200006, CPAN::Meta::Converter version 2.120921'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -25,4 +25,4 @@ requires:
 resources:
   bugtracker: http://github.com/plainblack/JSON-RPC-Dispatcher/issues
   repository: git://github.com/plainblack/JSON-RPC-Dispatcher.git
-version: 0.0505
+version: 0.0506
